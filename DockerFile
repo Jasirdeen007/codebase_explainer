@@ -1,10 +1,8 @@
 FROM python:3.10-slim
 
-# Prevent Python from writing pyc files
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies (FAISS needs this)
 RUN apt-get update && apt-get install -y \
     build-essential \
     libopenblas-dev \
@@ -13,25 +11,15 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy only requirements first (for caching)
 COPY requirements.txt .
-
-# Upgrade pip
-RUN pip install --upgrade pip
-
-# Install dependencies WITHOUT cache (IMPORTANT for size)
+RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project files
 COPY . .
 
 WORKDIR /app/codeexplainer
 
-# Collect static files
 RUN python manage.py collectstatic --noinput
-
-# Run migrations (optional here, can also do at runtime)
 RUN python manage.py migrate
 
-# Run server
-CMD ["gunicorn", "codeexplainer.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["sh", "-c", "gunicorn codeexplainer.wsgi:application --bind 0.0.0.0:$PORT"]
