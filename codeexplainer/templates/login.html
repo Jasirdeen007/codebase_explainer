@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Codebase Explainer</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body class="auth-screen">
+  <main class="auth-shell">
+    <section class="auth-card">
+      <p class="eyebrow">Secure access</p>
+      <h1>Log in to your workspace</h1>
+      <p class="auth-copy">Enter your gmail and password to continue to the project platform.</p>
+
+      {% if error_message %}
+      <div class="auth-alert">{{ error_message }}</div>
+      {% endif %}
+
+      {% if form.non_field_errors %}
+      <div class="auth-alert">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <form method="post" class="auth-form">
+        {% csrf_token %}
+        {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <label class="auth-field">
+          <span>Gmail</span>
+          {{ form.email }}
+          {% if form.email.errors %}<small>{{ form.email.errors.0 }}</small>{% endif %}
+        </label>
+
+        <label class="auth-field">
+          <span>Password</span>
+          {{ form.password }}
+          {% if form.password.errors %}<small>{{ form.password.errors.0 }}</small>{% endif %}
+        </label>
+
+        <button type="submit">Login</button>
+      </form>
+
+      <p class="auth-alt">New user? <a href="{% url 'signup' %}">Create account</a></p>
+    </section>
+  </main>
+</body>
+</html>

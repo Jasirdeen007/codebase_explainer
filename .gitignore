@@ -1,0 +1,27 @@
+# Environment and secrets
+.env
+*.env
+!.env.example
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+env/
+.venv/
+venv/
+
+# Django local state
+codeexplainer/db.sqlite3
+codeexplainer/media/
+codeexplainer/uploaded_repos/
+codeexplainer/vector_indexes/
+
+# Tooling noise
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store

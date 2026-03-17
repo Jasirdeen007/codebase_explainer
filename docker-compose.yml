@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: codeexplainer-db
+    environment:
+      POSTGRES_DB: codeexplainer
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: ai-code-explainer
+    depends_on:
+      - db
+    env_file:
+      - codeexplainer/.env
+    environment:
+      DB_ENGINE: django.db.backends.postgresql
+      DB_NAME: codeexplainer
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      VECTOR_STORE_BACKEND: database
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    working_dir: /app/codeexplainer
+    command: python manage.py runserver 0.0.0.0:8000
+
+volumes:
+  postgres_data:

@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | Codebase Explainer</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body class="auth-screen">
+  <main class="auth-shell">
+    <section class="auth-card">
+      <p class="eyebrow">Create account</p>
+      <h1>Sign up for Codebase Explainer</h1>
+      <p class="auth-copy">Create your account with name, gmail, and password, then continue directly to the platform.</p>
+
+      {% if form.non_field_errors %}
+      <div class="auth-alert">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <form method="post" class="auth-form">
+        {% csrf_token %}
+        <label class="auth-field">
+          <span>Name</span>
+          {{ form.name }}
+          {% if form.name.errors %}<small>{{ form.name.errors.0 }}</small>{% endif %}
+        </label>
+
+        <label class="auth-field">
+          <span>Gmail</span>
+          {{ form.email }}
+          {% if form.email.errors %}<small>{{ form.email.errors.0 }}</small>{% endif %}
+        </label>
+
+        <label class="auth-field">
+          <span>Password</span>
+          {{ form.password }}
+          {% if form.password.errors %}<small>{{ form.password.errors.0 }}</small>{% endif %}
+        </label>
+
+        <button type="submit">Create account</button>
+      </form>
+
+      <p class="auth-alt">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+    </section>
+  </main>
+</body>
+</html>

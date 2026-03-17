@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Codebase Explainer</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="repo-sidebar shell-card">
+      <section class="brand-panel">
+        <div class="brand-mark">CE</div>
+        <div class="brand-copy">
+          <p class="eyebrow">Repository intelligence</p>
+          <h1>Codebase Explainer</h1>
+          <p class="brand-lede">Editorial UI for exploring uploaded repositories, indexed files, and source-backed answers in one workspace.</p>
+        </div>
+        <div class="brand-metrics">
+          <div class="metric-pill">
+            <span>Mode</span>
+            <strong>RAG Workspace</strong>
+          </div>
+          <div class="metric-pill">
+            <span>Focus</span>
+            <strong>Files + Answers</strong>
+          </div>
+        </div>
+        <div class="account-pill">
+          <div class="account-copy">
+            <span>Signed in</span>
+            <strong>{{ request.user.first_name|default:request.user.username }}</strong>
+          </div>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="secondary-btn account-logout">Logout</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="panel upload-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Ingest</p>
+            <h2>Upload Repository</h2>
+          </div>
+          <span class="panel-badge">ZIP</span>
+        </div>
+        <p class="panel-subtitle">Drop in a zipped codebase, build the retrieval index, then switch straight into guided inspection.</p>
+        <label class="file-picker" for="repoFile">
+          <span class="file-picker-title">Choose archive</span>
+          <span class="file-picker-copy">Select one <code>.zip</code> repository to index.</span>
+        </label>
+        <input type="file" id="repoFile" accept=".zip">
+        <button id="uploadBtn" type="button">Upload and Index</button>
+        <p id="uploadStatus" class="status-text">Ready for upload.</p>
+      </section>
+
+      <section class="panel repo-panel">
+        <div class="panel-title-row">
+          <div>
+            <p class="eyebrow">Collection</p>
+            <h2>Repositories</h2>
+          </div>
+          <div class="panel-actions">
+            <span id="repoCount" class="panel-badge panel-badge-soft">0</span>
+            <button id="refreshRepos" type="button" class="secondary-btn">Refresh</button>
+          </div>
+        </div>
+        <div id="repoList" class="repo-card-list"></div>
+      </section>
+    </aside>
+
+    <section class="file-pane shell-card">
+      <header class="pane-header">
+        <div class="pane-heading">
+          <div>
+            <p class="eyebrow">Indexed map</p>
+            <h2 id="selectedRepoTitle">No repository selected</h2>
+            <p id="selectedRepoMeta" class="pane-copy">Select a repository card to inspect indexed files and narrow them quickly.</p>
+          </div>
+          <div class="pane-badges">
+            <span id="embeddingBackend" class="badge">Embedding backend: -</span>
+            <span id="fileCountBadge" class="badge badge-soft">0 files shown</span>
+          </div>
+        </div>
+        <div class="pane-tools">
+          <label class="sr-only" for="fileFilter">Filter indexed files</label>
+          <input id="fileFilter" type="text" placeholder="Filter files by path, folder, or extension">
+          <button id="clearFileFilter" type="button" class="secondary-btn subtle-btn">Clear</button>
+        </div>
+      </header>
+      <div id="fileTree" class="file-tree">
+        <p class="empty">Select a repository card to inspect indexed files.</p>
+      </div>
+    </section>
+
+    <main class="chat-pane shell-card">
+      <header class="chat-header">
+        <div class="chat-header-copy">
+          <p class="eyebrow">Assistant</p>
+          <h2>Source-backed answers</h2>
+          <p>Ask targeted questions, review cited files, and keep the conversation anchored to one selected repository.</p>
+        </div>
+        <div class="prompt-grid">
+          <button type="button" class="prompt-chip" data-prompt="Summarize the overall architecture of this repository.">Architecture</button>
+          <button type="button" class="prompt-chip" data-prompt="Which files look like the main entry points, and why?">Entry points</button>
+          <button type="button" class="prompt-chip" data-prompt="What UI or styling files are most important in this repository?">UI files</button>
+        </div>
+      </header>
+
+      <section id="chatBox" class="chat-box">
+        <div class="message bot">
+          <div class="message-role">Assistant</div>
+          <div class="message-text">
+            Upload a repository, select it, then ask focused questions.<br>
+            Example: "Which file handles authentication?" or "Explain the login flow."
+          </div>
+        </div>
+      </section>
+
+      <footer class="chat-input-row">
+        <div class="chat-compose-meta">
+          <span id="chatRepoBadge" class="badge badge-soft">No repository selected</span>
+          <span class="composer-hint">Press Enter to send</span>
+        </div>
+        <div class="chat-compose-row">
+          <input id="questionInput" type="text" placeholder="Which file handles API routing?">
+          <button id="sendBtn" type="button">Send</button>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="{% static 'js/chat.js' %}"></script>
+</body>
+</html>
