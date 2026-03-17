@@ -137,3 +137,11 @@ for required_dir in (UPLOAD_REPOS_DIR, VECTOR_INDEX_DIR, MEDIA_ROOT):
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://codebase-explainer-pr57.onrender.com"
+]
