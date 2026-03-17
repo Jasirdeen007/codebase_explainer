@@ -1,32 +1,37 @@
 FROM python:3.10-slim
 
-# System deps (IMPORTANT for faiss)
+# Prevent Python from writing pyc files
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Install system dependencies (FAISS needs this)
 RUN apt-get update && apt-get install -y \
     build-essential \
-    cmake \
     libopenblas-dev \
     libomp-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy requirements first (for caching)
+# Copy only requirements first (for caching)
 COPY requirements.txt .
-COPY requirements-ai.txt .
 
+# Upgrade pip
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-RUN pip install -r requirements-ai.txt
 
-# Copy project
+# Install dependencies WITHOUT cache (IMPORTANT for size)
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy project files
 COPY . .
 
-# Move into Django project folder
 WORKDIR /app/codeexplainer
 
-# Collect static + migrate
+# Collect static files
 RUN python manage.py collectstatic --noinput
+
+# Run migrations (optional here, can also do at runtime)
 RUN python manage.py migrate
 
-# Start server
+# Run server
 CMD ["gunicorn", "codeexplainer.wsgi:application", "--bind", "0.0.0.0:8000"]
