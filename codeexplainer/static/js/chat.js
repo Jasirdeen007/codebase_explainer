@@ -266,12 +266,13 @@ async function uploadRepository() {
 
   try {
     const response = await fetch("/api/upload/", {
-      method: "POST",
-      body: formData,
-      headers: {
-        "X-CSRFToken": getCookie("csrftoken"),
-      },
-    });
+       method: "POST",
+       body: formData,
+       credentials: "include",   // ⭐ THIS IS THE FIX
+       headers: {
+           "X-CSRFToken": getCookie("csrftoken"),
+       },
+      });
     const data = await response.json();
 
     if (data.status !== "success") {
@@ -310,11 +311,12 @@ async function askQuestion() {
   try {
     const response = await fetch("/api/ask/", {
       method: "POST",
+      credentials: "include",   // ⭐ ADD THIS
       headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken"),
+         "Content-Type": "application/json",
+         "X-CSRFToken": getCookie("csrftoken"),
       },
-      body: JSON.stringify({
+  body: JSON.stringify({
         question,
         repository_id: state.currentRepositoryId,
         top_k: 6,
